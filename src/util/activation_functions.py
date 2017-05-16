@@ -20,23 +20,23 @@ class Activation:
     @staticmethod
     def sigmoid(netOutput):
         # Here you have to code the sigmoid function
-        pass
+        return divide(1.0, (1.0 + exp(-netOutput)))
 
     @staticmethod
     def sigmoidPrime(netOutput):
         # Here you have to code the derivative of sigmoid function
         # netOutput.*(1-netOutput)
-        pass
+        return Activation.sigmoid(netOutput) * (1.0 - Activation.sigmoid(netOutput))
 
     @staticmethod
     def tanh(netOutput):
         # Here you have to code the tanh function
-        pass
+        return divide(1.0 - exp(-2.0 * netOutput), 1.0 + exp(-2.0 * netOutput))
 
     @staticmethod
     def tanhPrime(netOutput):
         # Here you have to code the derivative of tanh function
-        pass
+        return 1.0 - Activation.tanh(netOutput)^2 #TODO verifizieren.
 
     @staticmethod
     def rectified(netOutput):
@@ -45,7 +45,10 @@ class Activation:
     @staticmethod
     def rectifiedPrime(netOutput):
         # Here you have to code the derivative of rectified linear function
-        pass
+        if netOutput <= 0: #TODO: interpretation at 0. It might be undefined.
+            return 0
+        else:
+            return 1
 
     @staticmethod
     def identity(netOutput):
@@ -54,12 +57,15 @@ class Activation:
     @staticmethod
     def identityPrime(netOutput):
         # Here you have to code the derivative of identity function
-        pass
+        return 1
 
     @staticmethod
     def softmax(netOutput):
         # Here you have to code the softmax function
-        pass
+        numerator = [exp(i) for i in netOutput] #TODO: is the expected return value an array or a number?
+        sum_numerator = sum(numerator)
+        softmax = [i / sum_numerator for i in netOutput]
+        return softmax
 
     @staticmethod
     def getActivation(str):
