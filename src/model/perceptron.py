@@ -58,7 +58,12 @@ class Perceptron(Classifier):
         """
         
         # Write your code to train the perceptron here
-        pass
+        for i in range(len(self.trainingSet.input)):
+            if self.classify(self.trainingSet.input[i]) != self.trainingSet.label[i]:
+                if self.classify(self.trainingSet.input[i]):
+                    self.updateWeights(self.trainingSet.input[i], 1)
+                else:
+                    self.updateWeights(self.trainingSet.input[i], -1)
 
     def classify(self, testInstance):
         """Classify a single instance.
@@ -73,7 +78,12 @@ class Perceptron(Classifier):
             True if the testInstance is recognized as a 7, False otherwise.
         """
         # Write your code to do the classification on an input image
-        pass
+        #print(testInstance)
+        sum = 0
+        for i in range(len(testInstance)):
+            sum += testInstance[i] * self.weight[i]
+
+        return sum < 0
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
@@ -96,7 +106,9 @@ class Perceptron(Classifier):
 
     def updateWeights(self, input, error):
         # Write your code to update the weights of the perceptron here
-        pass
+
+        for i in self.weight:
+            i = i + self.learningRate * error * input
          
     def fire(self, input):
         """Fire the output of the perceptron corresponding to the input """
