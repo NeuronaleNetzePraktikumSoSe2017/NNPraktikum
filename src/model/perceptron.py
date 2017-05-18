@@ -60,10 +60,11 @@ class Perceptron(Classifier):
         
         # Write your code to train the perceptron here
         for epoch in range(self.epochs):
-            for i in range(len(self.trainingSet.input)):
-                classification = 1 if self.classify(self.trainingSet.input[i]) else 0
-                label = 1 if self.trainingSet.label[i] else 0
-                self.updateWeights(self.trainingSet.input[i], label - classification)
+            trainingData = zip(self.trainingSet.input, self.trainingSet.label)
+            for trainingInput, trainingLabel in trainingData:
+                classification = 1 if self.classify(trainingInput) else 0
+                label = 1 if trainingLabel else 0
+                self.updateWeights(trainingInput, label - classification)
             # copy from nextWeight to weight
             np.copyto(self.weight, self.nextWeight)
 
