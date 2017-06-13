@@ -19,10 +19,6 @@ class Activation:
 
     @staticmethod
     def sigmoid(netOutput):
-<<<<<<< HEAD
-=======
-        # Here you have to code the sigmoid function
->>>>>>> 8cc82c7cdef98e162f60309e4741acf092d6ad7f
         return divide(1.0, (1.0 + exp(-netOutput)))
 
     @staticmethod

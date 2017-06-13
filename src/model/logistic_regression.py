@@ -57,8 +57,8 @@ class LogisticRegression(Classifier):
         """
 
         # Try to use the abstract way of the framework
-        from util.loss_functions import DifferentError
-        loss = DifferentError()
+        from util.loss_functions import BinaryCrossEntropyError
+        loss = BinaryCrossEntropyError()
 
         learned = False
         iteration = 0
@@ -70,15 +70,13 @@ class LogisticRegression(Classifier):
             for input, label in zip(self.trainingSet.input,
                                     self.trainingSet.label):
                 output = self.fire(input)
-                if output != label:
-                    error = loss.calculateError(label, output)
-                    totalGrad += input * error
-                    totalError += error
+                totalGrad += input * (label - output)
+                totalError += loss.calculateError(label, output)
 
             self.updateWeights(totalGrad)
 
             if verbose:
-                logging.info("Epoch: %i; Error: %i", iteration, -totalError)
+                logging.info("Epoch: %i; Error: %f", iteration, totalError)
 
     def classify(self, testInstance):
         """Classify a single instance.
