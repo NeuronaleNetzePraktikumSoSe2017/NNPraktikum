@@ -19,26 +19,24 @@ class Activation:
 
     @staticmethod
     def sigmoid(netOutput):
-        # use e^x from numpy to avoid overflow
-        return 1/(1+exp(-1.0*netOutput))
+        # Here you have to code the sigmoid function
+        return divide(1.0, (1.0 + exp(-netOutput)))
 
     @staticmethod
     def sigmoidPrime(netOutput):
         # Here you have to code the derivative of sigmoid function
         # netOutput.*(1-netOutput)
-        pass
+        return Activation.sigmoid(netOutput) * (1.0 - Activation.sigmoid(netOutput))
 
     @staticmethod
     def tanh(netOutput):
-        # return 2*Activation.sigmoid(2*netOutput)-1
-        ex = exp(1.0*netOutput)
-        exn = exp(-1.0*netOutput)
-        return divide(ex-exn, ex+exn)  # element-wise division
+        # Here you have to code the tanh function
+        return divide(1.0 - exp(-2.0 * netOutput), 1.0 + exp(-2.0 * netOutput))
 
     @staticmethod
     def tanhPrime(netOutput):
         # Here you have to code the derivative of tanh function
-        pass
+        return 1.0 - Activation.tanh(netOutput)^2 #TODO verifizieren.
 
     @staticmethod
     def rectified(netOutput):
@@ -47,7 +45,10 @@ class Activation:
     @staticmethod
     def rectifiedPrime(netOutput):
         # Here you have to code the derivative of rectified linear function
-        pass
+        if netOutput <= 0: #TODO: interpretation at 0. It might be undefined.
+            return 0
+        else:
+            return 1
 
     @staticmethod
     def identity(netOutput):
@@ -56,12 +57,15 @@ class Activation:
     @staticmethod
     def identityPrime(netOutput):
         # Here you have to code the derivative of identity function
-        pass
+        return 1
 
     @staticmethod
     def softmax(netOutput):
         # Here you have to code the softmax function
-        pass
+        numerator = [exp(i) for i in netOutput] #TODO: is the expected return value an array or a number?
+        sum_numerator = sum(numerator)
+        softmax = [i / sum_numerator for i in netOutput]
+        return softmax
 
     @staticmethod
     def getActivation(str):
