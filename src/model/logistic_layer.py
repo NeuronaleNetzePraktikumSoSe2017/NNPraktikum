@@ -28,6 +28,8 @@ class LogisticLayer(Layer):
         weight matrix
     activation : functional
         activation function
+    derivative : functional
+        derivative of activation function
     activationString : string
         the name of the activation function
     isClassifierLayer: bool
@@ -47,6 +49,8 @@ class LogisticLayer(Layer):
         # Notice the functional programming paradigms of Python + Numpy
         self.activationString = activation
         self.activation = Activation.getActivation(self.activationString)
+
+        self.derivative = Activation.getDerivative(self.activationString)
 
         self.nIn = nIn
         self.nOut = nOut
@@ -84,7 +88,11 @@ class LogisticLayer(Layer):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        pass
+        return self.activation(np.dot(self.weights, input.T).T)
+
+
+
+
 
     def computeDerivative(self, nextDerivatives, nextWeights):
         """

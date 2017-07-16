@@ -6,6 +6,8 @@ Activation functions which can be used within neurons.
 
 from numpy import exp
 from numpy import divide
+from numpy import sum
+from numpy import max
 
 
 class Activation:
@@ -62,10 +64,15 @@ class Activation:
     @staticmethod
     def softmax(netOutput):
         # Here you have to code the softmax function
-        numerator = [exp(i) for i in netOutput] #TODO: is the expected return value an array or a number?
-        sum_numerator = sum(numerator)
-        softmax = [i / sum_numerator for i in netOutput]
-        return softmax
+        #numerator = [exp(i) for i in netOutput] #TODO: is the expected return value an array or a number?
+        #sum_numerator = sum(numerator)
+        #softmax = [i / sum_numerator for i in netOutput]
+        #return softmax
+
+        result_unnormalized = exp(netOutput - max(netOutput))
+        normalization = sum(result_unnormalized)
+        return divide(result_unnormalized, normalization)
+
 
     @staticmethod
     def getActivation(str):
