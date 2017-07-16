@@ -4,7 +4,7 @@ import time
 import numpy as np
 
 from util.activation_functions import Activation
-from model.layer import Layer
+#from model.layer import Layer
 
 
 class LogisticLayer(Layer):
@@ -58,6 +58,7 @@ class LogisticLayer(Layer):
         # Adding bias
         self.input = np.ndarray((nIn+1, 1))
         self.input[0] = 1
+        self.outputBeforeActivation = np.ndarray((nOut, 1))
         self.output = np.ndarray((nOut, 1))
         self.delta = np.zeros((nOut, 1))
 
@@ -88,11 +89,10 @@ class LogisticLayer(Layer):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        return self.activation(np.dot(self.weights, input.T).T)
-
-
-
-
+        self.input = input.T
+        self.outputBeforeActivation = np.dot(self.weights, self.input)
+        self.output = self.activation(self.outputBeforeActivation)
+        return self.output.T
 
     def computeDerivative(self, nextDerivatives, nextWeights):
         """
@@ -110,10 +110,12 @@ class LogisticLayer(Layer):
         ndarray :
             a numpy array containing the partial derivatives on this layer
         """
-        pass
+        self.delta = np.dot(nextWeights.T, nextDerivatives) * self.derivative(self.outputBeforeActivation)
+        return self.delta
 
-    def updateWeights(self):
+    def updateWeights(self, learningRate):
         """
         Update the weights of the layer
         """
-        pass
+        self.weights -= np.outer(learningRate * self.delta, self.input)
+
