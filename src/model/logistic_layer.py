@@ -7,7 +7,8 @@ from util.activation_functions import Activation
 #from model.layer import Layer
 
 
-class LogisticLayer(Layer):
+#class LogisticLayer(Layer):
+class LogisticLayer():
     """
     A layer of perceptrons acting as the output layer
 
@@ -58,7 +59,6 @@ class LogisticLayer(Layer):
         # Adding bias
         self.input = np.ndarray((nIn+1, 1))
         self.input[0] = 1
-        self.outputBeforeActivation = np.ndarray((nOut, 1))
         self.output = np.ndarray((nOut, 1))
         self.delta = np.zeros((nOut, 1))
 
@@ -90,8 +90,7 @@ class LogisticLayer(Layer):
             a numpy array (1,nOut) containing the output of the layer
         """
         self.input = input.T
-        self.outputBeforeActivation = np.dot(self.weights, self.input)
-        self.output = self.activation(self.outputBeforeActivation)
+        self.output = self.activation(np.dot(self.weights, self.input))
         return self.output.T
 
     def computeDerivative(self, nextDerivatives, nextWeights):
@@ -110,7 +109,7 @@ class LogisticLayer(Layer):
         ndarray :
             a numpy array containing the partial derivatives on this layer
         """
-        self.delta = np.dot(nextWeights.T, nextDerivatives) * self.derivative(self.outputBeforeActivation)
+        self.delta = np.dot(nextWeights.T, nextDerivatives) * self.derivative(self.output)
         return self.delta
 
     def updateWeights(self, learningRate):

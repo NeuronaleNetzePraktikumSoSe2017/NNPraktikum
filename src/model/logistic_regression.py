@@ -7,6 +7,7 @@ import numpy as np
 
 from util.activation_functions import Activation
 from model.classifier import Classifier
+from model.logistic_layer import LogisticLayer
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
                     level=logging.DEBUG,
@@ -45,7 +46,9 @@ class LogisticRegression(Classifier):
         self.testSet = test
 
         # Initialize the weight vector with small values
-        self.weight = 0.01*np.random.randn(self.trainingSet.input.shape[1])
+        # self.weight = 0.01*np.random.randn(self.trainingSet.input.shape[1])
+
+        self.layer = LogisticLayer(self.trainingSet.input.shape[1], 1, activation='sigmoid')
 
     def train(self, verbose=True):
         """Train the Logistic Regression.
@@ -56,38 +59,26 @@ class LogisticRegression(Classifier):
             Print logging messages with validation accuracy if verbose is True.
         """
 
-        from util.loss_functions import DifferentError
-        loss = DifferentError()
+        from util.loss_functions import BinaryCrossEntropyError
+        loss = BinaryCrossEntropyError()
 
-        learned = False
-        iteration = 0
+        nextWeights = np.ones((1,1))
 
-        while not learned:
+        for iteration in range(self.epochs):
             grad = 0
-            totalError = 0
-            for input, label in zip(self.trainingSet.input,
-                                    self.trainingSet.label):
-                output = self.fire(input)
-                # compute gradient
-                grad += -(label - output)*input
-
-                # compute recognizing error, not BCE
-                predictedLabel = self.classify(input)
-                error = loss.calculateError(label, predictedLabel)
-                totalError += error
-
-            self.updateWeights(grad)
-            totalError = abs(totalError)
+            index = np.random.randint(len(self.trainingSet.input))
+            input = self.trainingSet.input[index]
+            label = self.trainingSet.label[index]
+            predictedLabel = np.clip(self.fire(input), 1e-8, 1 - 1e-8)
+            error = loss.calculateError(label, predictedLabel)
+            # derivative of binary cross entropy
+            lossDerivative = np.divide((predictedLabel - label), predictedLabel * (1.0 - predictedLabel))
+            self.layer.computeDerivative(lossDerivative * predictedLabel, nextWeights)
+            self.updateWeights()
             
-            iteration += 1
-
             if verbose:
-                logging.info("Epoch: %i; Error: %i", iteration, totalError)
-                
+                logging.info("Epoch: %i; Error: %f", iteration, error)
 
-            if totalError == 0 or iteration >= self.epochs:
-                # stop criteria is reached
-                learned = True
 
     def classify(self, testInstance):
         """Classify a single instance.
@@ -122,8 +113,11 @@ class LogisticRegression(Classifier):
         # set.
         return list(map(self.classify, test))
 
-    def updateWeights(self, grad):
-        self.weight -= self.learningRate*grad
+    def updateWeights(self):
+        self.layer.updateWeights(self.learningRate)
 
     def fire(self, input):
-        return Activation.sigmoid(np.dot(np.array(input), self.weight))
+        inputArray = np.ndarray((1, self.layer.nIn + 1))
+        inputArray[0][0] = 1
+        inputArray[0][1:] = input
+        return self.layer.forward(inputArray)[0][0]
