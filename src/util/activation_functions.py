@@ -32,7 +32,7 @@ class Activation:
 
     @staticmethod
     def tanh(netOutput):
-        # return 2*Activation.sigmoid(2*netOutput)-1
+        return 2*Activation.sigmoid(2*netOutput)-1
         ex = exp(1.0*netOutput)
         exn = exp(-1.0*netOutput)
         return divide(ex-exn, ex+exn)  # element-wise division
@@ -40,7 +40,8 @@ class Activation:
     @staticmethod
     def tanhPrime(netOutput):
         # Here you have to code the derivative of tanh function
-        return (1-Activation.tanh(netOutput)**2)
+        #return (1-Activation.tanh(netOutput)**2)
+        return 1.0 - netOutput * netOutput
 
     @staticmethod
     def rectified(netOutput):
@@ -63,13 +64,13 @@ class Activation:
 
     @staticmethod
     def softmax(netOutput):
-        # Here you have to code the softmax function
-        pass
+        result_unnormalized = exp(netOutput - max(netOutput))
+        normalization = sum(result_unnormalized)
+        return divide(result_unnormalized, normalization)
         
     @staticmethod
     def softmaxPrime(netOutput):
-        # Here you have to code the softmax function
-        pass
+        return netOutput * (1.0 - netOutput)
         
     @staticmethod
     def getActivation(str):
